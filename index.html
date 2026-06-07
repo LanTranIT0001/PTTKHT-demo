@@ -68,10 +68,10 @@
                     <i data-lucide="coffee" class="w-4 h-4"></i> Thiết lập thực đơn
                 </button>
                 <button onclick="switchTab('tab-kho')" id="nav-tab-kho" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm transition-colors hover:bg-slate-800 cursor-pointer">
-                    <i data-lucide="boxes" class="w-4 h-4"></i> Quản lý kho (BOM)
+                    <i data-lucide="boxes" class="w-4 h-4"></i> Quản lý kho 
                 </button>
                 <button onclick="switchTab('tab-hoadon')" id="nav-tab-hoadon" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm transition-colors hover:bg-slate-800 cursor-pointer">
-                    <i data-lucide="receipt" class="w-4 h-4"></i> Nhật ký hóa đơn
+                    <i data-lucide="receipt" class="w-4 h-4"></i> Lịch sử hóa đơn
                 </button>
                 <button onclick="switchTab('tab-baocao')" id="nav-tab-baocao" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm transition-colors hover:bg-slate-800 cursor-pointer">
                     <i data-lucide="line-chart" class="w-4 h-4"></i> Thống kê báo cáo
@@ -213,15 +213,6 @@
                     </div>
 
                     <div id="tab-phache" class="tab-content hidden space-y-4">
-                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex justify-between items-center">
-                            <div>
-                                <h4 class="font-bold text-gray-800">Màn Hình Điều Phối Pha Chế (KDS)</h4>
-                                <p class="text-xs text-gray-500">Món ăn/nước uống đổ về đây theo thời gian thực ngay sau khi thu ngân chốt đơn</p>
-                            </div>
-                            <div class="text-xs bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1.5 rounded-lg font-semibold animate-pulse">
-                                Tự động đồng bộ KDS
-                            </div>
-                        </div>
                         <div id="kds-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
                     </div>
 
@@ -253,7 +244,6 @@
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
                                 <div>
                                     <h4 class="font-bold text-gray-800 text-base">Quản lý thực đơn hàng hóa</h4>
-                                    <p class="text-xs text-gray-500">Cấu hình thuộc tính, nhóm món, giá tiền và trạng thái kinh doanh của sản phẩm</p>
                                 </div>
                                 <button onclick="alert('Tính năng nghiệp vụ CMS')" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium px-4 py-2 rounded-lg shadow cursor-pointer flex items-center gap-1.5">
                                     <i data-lucide="plus" class="w-4 h-4"></i> Thêm món mới
@@ -293,22 +283,6 @@
                                     </thead>
                                     <tbody id="table-inventory" class="text-xs text-gray-700 divide-y divide-gray-100"></tbody>
                                 </table>
-                            </div>
-                        </div>
-                        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 space-y-4">
-                            <h4 class="font-bold text-gray-800 text-sm border-b border-gray-100 pb-2">Cơ chế tự động trừ kho định mức (BOM)</h4>
-                            <div class="text-xs text-gray-600 space-y-3 leading-relaxed">
-                                <p>Hệ thống áp dụng công thức định mức nguyên vật liệu <strong>BOM (Bill of Materials)</strong> khi vận hành:</p>
-                                <div class="bg-slate-50 p-3 rounded-lg border border-gray-200 space-y-1">
-                                    <div class="font-semibold text-gray-800">☕ 1 Ly Cà Phê Sữa:</div>
-                                    <ul class="list-disc list-inside text-[11px] text-gray-500">
-                                        <li>Hạt cà phê Robusta: 25g</li>
-                                        <li>Sữa đặc có đường: 30ml</li>
-                                    </ul>
-                                </div>
-                                <p class="text-red-600 font-medium bg-red-50 p-2.5 rounded border border-red-100">
-                                    ⚠️ Khi nhân viên hoàn tất hóa đơn thanh toán, cấu trúc kho sẽ tự động trừ tương ứng theo thời gian thực. Hệ thống cảnh báo đỏ ngay lập tức nếu kho chạm ngưỡng tối thiểu!
-                                </p>
                             </div>
                         </div>
                     </div>
@@ -445,12 +419,12 @@
         <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden">
             <div class="bg-slate-900 text-white p-4 flex justify-between items-center">
                 <h3 class="font-bold text-sm flex items-center gap-1.5 text-amber-400">
-                    <i data-lucide="shield-alert"></i> Phê duyệt ngoại lệ (Quản lý duyệt)
+                    <i data-lucide="shield-alert"></i> <span id="exception-modal-header-title">Phê duyệt ngoại lệ (Quản lý duyệt)</span>
                 </h3>
                 <button onclick="closeExceptionModal()" class="text-slate-400 hover:text-white cursor-pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
             <div class="p-6 space-y-4">
-                <div class="p-3 bg-amber-50 rounded-lg border border-amber-200 text-xs text-amber-800 leading-normal">
+                <div id="exception-notice-box" class="p-3 bg-amber-50 rounded-lg border border-amber-200 text-xs text-amber-800 leading-normal">
                     Nghiệp vụ yêu cầu cấp quyền duyệt đặc biệt. Vui lòng nhập lý do phát sinh và yêu cầu Quản lý xác nhận mã Pin bảo mật hệ thống.
                 </div>
                 <div>
@@ -477,7 +451,7 @@
                     <input id="exception-reason" type="text" placeholder="Ví dụ: Khách đổi ý, món làm sai công thức, trả hàng..." class="w-full text-xs border p-2 rounded-lg bg-slate-50 focus:outline-none">
                 </div>
 
-                <div class="p-4 bg-slate-100 rounded-lg border border-gray-200">
+                <div id="wrapper-manager-pin" class="p-4 bg-slate-100 rounded-lg border border-gray-200">
                     <label class="block text-xs font-bold text-gray-700 mb-1">🔒 Xác thực tài khoản cấp cao (Manager Pin)</label>
                     <div class="flex gap-2">
                         <input id="exception-pin" type="password" placeholder="Nhập mã pin quản lý" class="bg-white text-xs border px-3 py-1.5 rounded flex-1 focus:outline-none">
@@ -487,21 +461,19 @@
             </div>
             <div class="p-4 bg-gray-50 border-t flex justify-end gap-2">
                 <button onclick="closeExceptionModal()" class="px-4 py-2 text-xs font-semibold bg-gray-200 rounded-lg text-gray-700 cursor-pointer">Đóng</button>
-                <button onclick="submitExceptionFlow()" class="px-4 py-2 text-xs font-semibold bg-red-600 hover:bg-red-700 text-white rounded-lg shadow cursor-pointer">Xác nhận thực hiện</button>
+                <button id="btn-submit-exception" onclick="submitExceptionFlow()" class="px-4 py-2 text-xs font-semibold bg-red-600 hover:bg-red-700 text-white rounded-lg shadow cursor-pointer">Xác nhận thực hiện</button>
             </div>
         </div>
     </div>
 
     <script>
-        let currentActor = 'quanly'; // Tác nhân hiện tại
+        let currentActor = 'quanly'; 
         let selectedTableId = null;
         let isOnline = true;
         let activeMenuIdForOptions = null;
         let currentSelectedZone = 'all';
         let currentModalQty = 1;
 
-        // Ma trận phân quyền theo tác nhân chính và phụ (ACL Map)
-        // Lưu trữ các tab được phép truy cập của từng Role. Nếu không có tên trong mảng => KHÔNG CÓ QUYỀN TRUY CẬP
         const ACL_PERMISSIONS = {
             quanly: ['tab-ban', 'tab-phache', 'tab-online', 'tab-mon', 'tab-kho', 'tab-hoadon', 'tab-baocao'],
             phucvu: ['tab-ban'],
@@ -533,7 +505,7 @@
             { name: 'Hạt Cà phê', quantity: 5000, unit: 'g', minLimit: 1000 },
             { name: 'Sữa đặc', quantity: 3000, unit: 'ml', minLimit: 500 },
             { name: 'Cốt trà', quantity: 10000, unit: 'ml', minLimit: 2000 },
-            { name: 'Đào miếng', quantity: 50, unit: 'miếng', minLimit: 10 },
+            { name: 'Đào miếng', quantity: 50,  unit: 'miếng', minLimit: 10 },
             { name: 'Mứt dâu', quantity: 2000, unit: 'ml', minLimit: 400 },
             { name: 'Bánh đông lạnh', quantity: 15, unit: 'cái', minLimit: 2 },
             { name: 'Bánh làm sẵn', quantity: 12, unit: 'cái', minLimit: 2 }
@@ -567,7 +539,6 @@
             document.getElementById('screen-main').classList.remove('hidden');
             document.getElementById('user-tag').innerText = 'Quyền: ' + currentActor.toUpperCase();
 
-            // Chuyển hướng về tab mặc định tương thích với từng vai trò
             if(currentActor === 'phache') {
                 switchTab('tab-phache');
             } else {
@@ -581,7 +552,6 @@
         }
 
         function switchTab(tabId) {
-            // Kiểm tra phân luồng quyền hạn tác nhân chính (ACL Check)
             const allowedTabs = ACL_PERMISSIONS[currentActor] || [];
             const mainWrapper = document.getElementById('main-tab-wrapper');
             const deniedWidget = document.getElementById('acl-denied-widget');
@@ -589,7 +559,6 @@
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
 
             if (!allowedTabs.includes(tabId)) {
-                // Hiển thị giao diện Chặn truy cập quyền nghiệp vụ
                 mainWrapper.classList.add('hidden');
                 deniedWidget.classList.remove('hidden');
             } else {
@@ -624,7 +593,6 @@
         }
 
         function createTakeAwayOrder() {
-            // Chặn quyền gọi món mang đi của tài khoản Pha chế
             if(currentActor === 'phache') {
                 alert('Tài khoản Pha chế không có quyền khởi tạo đơn hàng!');
                 return;
@@ -706,7 +674,6 @@
         }
 
         function handleTableStateCycle(tableId) {
-            // Nghiệp vụ dọn bàn và mở bàn bị chặn đối với tài khoản pha chế
             if (currentActor === 'phache') {
                 alert('Tài khoản Pha chế không được cấu hình sơ đồ phục vụ bàn!');
                 return;
@@ -754,19 +721,13 @@
             document.getElementById('panel-order-chuyenbiet').classList.remove('hidden');
             document.getElementById('order-screen-table-title').innerText = tb.name;
 
-            // Phân luồng chặn chức năng điều phối bàn (Thu ngân / Phục vụ không có quyền quản lý nâng cao này)
-            if (tb.isTakeAway || currentActor === 'phucvu' || currentActor === 'thungan') {
+            if (tb.isTakeAway) {
                 document.getElementById('group-action-dieuphoi').classList.add('hidden');
             } else {
                 document.getElementById('group-action-dieuphoi').classList.remove('hidden');
             }
 
-            // Chặn nhân viên Thu ngân chọn món (Chỉ được xử lý thanh toán)
-            if(currentActor === 'thungan') {
-                document.getElementById('pos-menu-interaction-zone').classList.add('pointer-events-none', 'opacity-40');
-            } else {
-                document.getElementById('pos-menu-interaction-zone').classList.remove('pointer-events-none', 'opacity-40');
-            }
+            document.getElementById('pos-menu-interaction-zone').classList.remove('pointer-events-none', 'opacity-40');
 
             if (tb.isPaid) {
                 document.getElementById('order-screen-paid-badge').classList.remove('hidden');
@@ -788,8 +749,8 @@
         }
 
         function executeTableActionDirect(actionType) {
-            if (currentActor !== 'quanly') {
-                alert('Tính năng đổi/chuyển/ghép gộp thuộc quyền hạn của Quản lý!');
+            if (currentActor === 'phache') {
+                alert('Tài khoản Pha chế không có quyền thao tác nghiệp vụ điều phối này!');
                 return;
             }
             const srcTable = tables.find(t => t.id == selectedTableId);
@@ -844,11 +805,7 @@
         }
 
         function unlockForMoreFood() {
-            // Phục vụ hoặc quản lý được gọi thêm món, thu ngân bị chặn
-            if(currentActor === 'thungan') {
-                alert('Thu ngân không có quyền kích hoạt tính năng gọi thêm món!');
-                return;
-            }
+            if(currentActor === 'phache') return;
             const tb = tables.find(t => t.id == selectedTableId);
             if (!tb) return;
             tb.isPaid = false;
@@ -960,9 +917,10 @@
             document.getElementById('pos-total').innerText = total.toLocaleString() + 'đ';
         }
 
+        // Cập nhật sửa lỗi: Loại bỏ đoạn check actor sai vị trí làm mất giá trị activeMenuIdForOptions
         function openProductOptionsModal(menuId) {
             const tb = tables.find(t => t.id == selectedTableId);
-            if((tb && tb.isPaid) || currentActor === 'thungan') return; 
+            if(tb && tb.isPaid) return; 
 
             activeMenuIdForOptions = menuId;
             const item = menuItems.find(m => m.id === menuId);
@@ -1058,11 +1016,6 @@
         }
 
         function processPayment(paymentMethod) {
-            // Nhân viên phục vụ không được trực tiếp bấm thu tiền chốt hóa đơn
-            if (currentActor === 'phucvu') {
-                alert('Nghiệp vụ thanh toán thuộc vai trò của Thu ngân hoặc Quản lý!');
-                return;
-            }
             const tb = tables.find(t => t.id == selectedTableId);
             if (!tb || tb.cart.length === 0) return;
 
@@ -1086,7 +1039,6 @@
                 return;
             }
 
-            // Khấu trừ nguyên vật liệu kho tự động (UC06)
             tb.cart.forEach(cartItem => {
                 const menuItem = menuItems.find(m => m.id === cartItem.id);
                 if (menuItem && menuItem.bom) {
@@ -1123,7 +1075,6 @@
             backToSoDoBan();
         }
 
-        // KÍCH HOẠT PHÂN LUỒNG NGOẠI LỆ CHO ĐƠN ĐANG CHỌN (TRƯỚC/SAU THANH TOÁN)
         function triggerExceptionFlow() {
             const tb = tables.find(t => t.id == selectedTableId);
             if (!tb || tb.cart.length === 0) return;
@@ -1140,7 +1091,6 @@
             toggleExceptionUI();
         }
 
-        // KÍCH HOẠT PHÂN LUỒNG NGOẠI LỆ CHO HOÀN TIỀN HÓA ĐƠN ĐÃ CHỐT (UC12)
         function triggerRefundInvoiceFlow(invoiceId) {
             const inv = invoices.find(i => i.id === invoiceId);
             if (!inv) return;
@@ -1163,6 +1113,11 @@
             const type = document.getElementById('exception-type').value;
             const doiWrapper = document.getElementById('wrapper-doi-mon');
             const hoadonWrapper = document.getElementById('wrapper-target-invoice');
+            
+            const pinWrapper = document.getElementById('wrapper-manager-pin');
+            const noticeBox = document.getElementById('exception-notice-box');
+            const submitBtn = document.getElementById('btn-submit-exception');
+            const headerTitle = document.getElementById('exception-modal-header-title');
 
             if(type === 'doi') {
                 doiWrapper.classList.remove('hidden');
@@ -1174,20 +1129,38 @@
                 doiWrapper.classList.add('hidden');
                 hoadonWrapper.classList.add('hidden');
             }
+
+            if (currentActor === 'quanly') {
+                headerTitle.innerText = "Phê duyệt ngoại lệ (Quản lý duyệt)";
+                noticeBox.innerText = "Nghiệp vụ yêu cầu cấp quyền duyệt đặc biệt. Vui lòng nhập lý do phát sinh và nhập mã Pin bảo mật hệ thống để xác nhận.";
+                pinWrapper.classList.remove('hidden');
+                submitBtn.innerText = "Xác nhận thực hiện";
+                submitBtn.className = "px-4 py-2 text-xs font-semibold bg-red-600 hover:bg-red-700 text-white rounded-lg shadow cursor-pointer";
+            } else {
+                headerTitle.innerText = "Ghi nhận nghiệp vụ ngoại lệ (Chờ duyệt)";
+                noticeBox.innerText = "Tài khoản nhân viên không được phép tự duyệt. Hệ thống sẽ chuyển tiếp toàn bộ thông tin này xuống máy Quản lý phê duyệt từ xa.";
+                pinWrapper.classList.add('hidden'); 
+                submitBtn.innerText = "Gửi yêu cầu lên Quản lý";
+                submitBtn.className = "px-4 py-2 text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow cursor-pointer";
+            }
         }
 
         function submitExceptionFlow() {
-            // Chặn chặt chẽ: Bắt buộc mã pin Quản lý bảo mật cấp cao (123)
+            const type = document.getElementById('exception-type').value;
+            const reason = document.getElementById('exception-reason').value || 'Yêu cầu ngoại lệ hệ thống';
+            
+            if (currentActor !== 'quanly') {
+                alert(` Gửi yêu cầu thành công! Hệ thống đã chuyển lệnh [${type.toUpperCase()}] kèm lý do: "${reason}" tới Quản lý chờ xét duyệt.`);
+                closeExceptionModal();
+                return;
+            }
+
             const pin = document.getElementById('exception-pin').value;
             if (pin !== '123') {
                 alert('Mã Pin duyệt của Quản lý không chính xác! Không thể thực thi.');
                 return;
             }
-
-            const type = document.getElementById('exception-type').value;
-            const reason = document.getElementById('exception-reason').value || 'Yêu cầu ngoại lệ hệ thống';
             
-            // XỬ LÝ UC12: HOÀN TIỀN SAU KHI ĐÃ ĐÓNG HÓA ĐƠN
             if (type === 'hoantien') {
                 const targetId = document.getElementById('exception-invoice-id').value;
                 const inv = invoices.find(i => i.id === targetId);
@@ -1197,13 +1170,11 @@
                     alert(`Hệ thống đã phê duyệt lệnh Hoàn tiền cho hóa đơn ${targetId}!`);
                 }
             } 
-            // XỬ LÝ UC10 & UC11 TRONG GIỎ HÀNG BÀN PHỤC VỤ
             else {
                 const tb = tables.find(t => t.id == selectedTableId);
                 if (!tb || tb.cart.length === 0) return;
 
                 if (type === 'huy') {
-                    // Hoàn nguyên nguyên vật liệu về kho định mức (BOM)
                     tb.cart.forEach(cartItem => {
                         const menuItem = menuItems.find(m => m.id === cartItem.id);
                         if (menuItem && menuItem.bom) {
@@ -1230,7 +1201,7 @@
                     const newItem = menuItems.find(m => m.id === targetFoodId);
                     if(newItem) {
                         tb.cart = [{
-                            id: newItem.id, name: newItem.name, size: 'M', toppings: [], note: `Đổi món món: ${reason}`, qty: 1, singlePrice: newItem.price, isCake: newItem.category === 'Banh'
+                            id: newItem.id, name: newItem.name, size: 'M', toppings: [], note: `Đổi món: ${reason}`, qty: 1, singlePrice: newItem.price, isCake: newItem.category === 'Banh'
                         }];
                         tb.isPaid = false; 
                     }
@@ -1289,7 +1260,6 @@
                 const tr = document.createElement('tr');
                 tr.className = "border-b border-gray-100 text-xs";
                 
-                // Hiển thị nút hoàn tiền nghiệp vụ UC12 dựa theo trạng thái hóa đơn
                 let actionBtnUI = inv.status === 'DaThanhToan' ? 
                     `<button onclick="triggerRefundInvoiceFlow('${inv.id}')" class="bg-red-600 hover:bg-red-700 text-white text-[11px] px-2 py-1 rounded font-bold transition-colors cursor-pointer">Hoàn tiền HĐ</button>` : 
                     `<span class="text-gray-400 italic">Đã xử lý hoàn</span>`;
@@ -1328,8 +1298,7 @@
         }
 
         function acceptOnlineOrder(orderId) {
-            // Chặn nhân viên phục vụ xác nhận đơn trực tuyến của Grab/ShopeeFood
-            if (currentActor === 'phucvu' || currentActor === 'phache') {
+            if (currentActor === 'phace' || currentActor === 'phucvu') {
                 alert('Tài khoản hiện tại không có thẩm quyền xác nhận đơn trực tuyến!');
                 return;
             }
