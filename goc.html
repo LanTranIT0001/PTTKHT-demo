@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Lý Cà Phê POS - CMS</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+
+    <div id="screen-login" class="min-h-screen flex items-center justify-center bg-cover bg-center bg-slate-900">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
+            <div class="text-center mb-8">
+                <div class="inline-flex p-3 bg-amber-100 text-amber-700 rounded-full mb-3">
+                    <i data-lucide="coffee" class="w-8 h-8"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900">Hệ Thống POS Cà Phê</h1>
+                <p class="text-gray-500 text-sm mt-1">Vui lòng đăng nhập hệ thống</p>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Tài khoản nghiệp vụ</label>
+                    <select id="login-username" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none font-medium">
+                        <option value="quanly">Quản lý</option>
+                        <option value="phucvu">Nhân viên - Phục vụ</option>
+                        <option value="thungan">Nhân viên - Thu ngân</option>
+                        <option value="phache">Nhân viên - Pha chế</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Mật khẩu</label>
+                    <input type="password" value="123456" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                </div>
+                <button onclick="handleLogin()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium py-2.5 rounded-lg transition-colors shadow-lg shadow-amber-600/20 cursor-pointer">
+                    Xác thực Đăng nhập
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-main" class="hidden min-h-screen flex flex-col md:flex-row">
+        
+        <aside class="w-full md:w-64 bg-slate-900 text-slate-300 flex flex-col shadow-xl shrink-0">
+            <div class="p-5 flex items-center gap-3 border-b border-slate-800 bg-slate-950">
+                <i data-lucide="coffee" class="text-amber-500 w-6 h-6"></i>
+                <div>
+                    <h2 class="font-bold text-white text-sm leading-tight">DEMO NHÓM 3</h2>
+                    <span id="user-tag" class="text-xs text-amber-400 font-medium">Vai trò</span>
+                </div>
+            </div>
+            
+            <nav class="flex-1 p-3 space-y-1 overflow-y-auto">
+                <button onclick="switchTab('tab-ban')" id="nav-tab-ban" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm transition-colors hover:bg-slate-800 text-white cursor-pointer">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Sơ đồ bàn & Gọi món
+                </button>
+                <button onclick="switchTab('tab-phache')" id="nav-tab-phache" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm transition-colors hover:bg-slate-800 cursor-pointer">
+                    <i data-lucide="chef-hat" class="w-4 h-4"></i> Quầy pha chế (KDS)
+                </button>
+                <button onclick="switchTab('tab-online')" id="nav-tab-online" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm transition-colors hover:bg-slate-800 relative cursor-pointer">
+                    <i data-lucide="globe" class="w-4 h-4"></i> Đơn trực tuyến
+                    <span id="badge-online" class="absolute right-3 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold">2</span>
+                </button>
+                
+                <div class="pt-4 pb-1 px-4 text-xs font-semibold uppercase text-slate-500 tracking-wider">Quản lý nâng cao (CMS)</div>
+                <button onclick="switchTab('tab-mon')" id="nav-tab-mon" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm transition-colors hover:bg-slate-800 cursor-pointer">
+                    <i data-lucide="coffee" class="w-4 h-4"></i> Thiết lập thực đơn
+                </button>
+                <button onclick="switchTab('tab-kho')" id="nav-tab-kho" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm transition-colors hover:bg-slate-800 cursor-pointer">
+                    <i data-lucide="boxes" class="w-4 h-4"></i> Quản lý kho (BOM)
+                </button>
+                <button onclick="switchTab('tab-hoadon')" id="nav-tab-hoadon" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm transition-colors hover:bg-slate-800 cursor-pointer">
+                    <i data-lucide="receipt" class="w-4 h-4"></i> Nhật ký hóa đơn
+                </button>
+                <button onclick="switchTab('tab-baocao')" id="nav-tab-baocao" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-medium text-sm transition-colors hover:bg-slate-800 cursor-pointer">
+                    <i data-lucide="line-chart" class="w-4 h-4"></i> Thống kê báo cáo
+                </button>
+            </nav>
+
+            <div class="p-3 border-t border-slate-800 bg-slate-950/50">
+                <div class="flex items-center justify-between px-3 py-2 bg-slate-900 rounded-lg border border-slate-800">
+                    <span class="text-xs text-slate-400 flex items-center gap-1.5">
+                        <span id="network-dot" class="w-2 bg-green-500 rounded-full h-2 animate-pulse"></span>
+                        Mạng hệ thống
+                    </span>
+                    <button onclick="toggleNetwork()" id="btn-network" class="text-[11px] bg-slate-800 hover:bg-slate-700 px-2 py-0.5 text-slate-300 rounded font-medium cursor-pointer">Ngắt mạng</button>
+                </div>
+                <button onclick="handleLogout()" class="w-full flex items-center gap-3 px-4 py-2.5 mt-3 rounded-lg font-medium text-sm text-red-400 hover:bg-red-950/30 transition-colors cursor-pointer">
+                    <i data-lucide="log-out" class="w-4 h-4"></i> Đăng xuất tài khoản
+                </button>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col overflow-hidden bg-slate-50">
+            <header class="bg-white border-b border-gray-200 h-14 flex items-center justify-between px-6 shrink-0">
+                <div class="flex items-center gap-2">
+                    <h3 id="current-tab-title" class="font-bold text-gray-800 text-base">Sơ đồ bàn & Gọi món</h3>
+                    <div id="offline-alert" class="hidden bg-amber-500 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-full animate-bounce">Chế độ Ngoại tuyến</div>
+                </div>
+                <div class="flex items-center gap-4 text-xs font-medium text-gray-500">
+                    <span class="bg-slate-100 px-2.5 py-1 rounded border border-gray-200 text-gray-700" id="current-time">07/06/2026</span>
+                </div>
+            </header>
+
+            <div class="flex-1 overflow-auto p-6">
+                
+                <div id="acl-denied-widget" class="hidden h-full flex flex-col items-center justify-center bg-white border border-gray-200 rounded-2xl p-8 text-center shadow-xs">
+                    <div class="p-4 bg-red-100 text-red-600 rounded-full mb-3 animate-pulse">
+                        <i data-lucide="shield-alert" class="w-12 h-12"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900">KHÔNG CÓ QUYỀN TRUY CẬP</h3>
+                    <p class="text-sm text-gray-500 mt-1 max-w-md leading-normal">Nghiệp vụ chức năng này thuộc phân vùng hạn chế. Vai trò tài khoản hiện tại của bạn không được cấp quyền điều phối mục này.</p>
+                </div>
+
+                <div id="main-tab-wrapper" class="h-full">
+                    
+                    <div id="tab-ban" class="tab-content h-full space-y-4">
+                        <div id="panel-sodo-ban" class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col h-full">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-gray-100">
+                                <div class="flex gap-2 overflow-x-auto items-center" id="zone-filter-container">
+                                    <button onclick="filterZone('all')" id="btn-zone-all" class="zone-filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-600 text-white whitespace-nowrap cursor-pointer">Tất cả khu vực</button>
+                                    <button onclick="filterZone('Tầng 1')" id="btn-zone-t1" class="zone-filter-btn px-3 py-1.5 text-xs font-medium rounded-lg text-gray-600 hover:bg-gray-100 whitespace-nowrap cursor-pointer">Tầng 1</button>
+                                    <button onclick="filterZone('Tầng 2')" id="btn-zone-t2" class="zone-filter-btn px-3 py-1.5 text-xs font-medium rounded-lg text-gray-600 hover:bg-gray-100 whitespace-nowrap cursor-pointer">Tầng 2</button>
+                                    <button onclick="filterZone('Sân vườn')" id="btn-zone-sv" class="zone-filter-btn px-3 py-1.5 text-xs font-medium rounded-lg text-gray-600 hover:bg-gray-100 whitespace-nowrap cursor-pointer">Sân vườn</button>
+                                    <div class="h-5 w-px bg-gray-300 mx-1"></div>
+                                    <button onclick="createTakeAwayOrder()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-sm whitespace-nowrap cursor-pointer">
+                                        <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i> Đơn Mang Về (Take-away)
+                                    </button>
+                                </div>
+                                <div class="flex flex-wrap gap-3 text-xs text-gray-500">
+                                    <span class="flex items-center gap-1"><span class="w-3 h-3 bg-gray-200 rounded"></span>Trống</span>
+                                    <span class="flex items-center gap-1"><span class="w-3 h-3 bg-blue-500 rounded"></span>Đang dùng</span>
+                                    <span class="flex items-center gap-1"><span class="w-3 h-3 bg-purple-500 rounded"></span>Chờ dọn</span>
+                                </div>
+                            </div>
+                            <div id="grid-tables" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 overflow-y-auto flex-1 content-start"></div>
+                        </div>
+
+                        <div id="panel-order-chuyenbiet" class="hidden grid grid-cols-1 xl:grid-cols-3 gap-6 h-[calc(100vh-10rem)]">
+                            <div class="xl:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col overflow-hidden">
+                                <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-100 shrink-0">
+                                    <div class="flex flex-wrap items-center gap-3">
+                                        <button onclick="backToSoDoBan()" class="flex items-center gap-1 text-xs font-bold text-slate-700 hover:text-amber-600 bg-slate-100 hover:bg-amber-50 px-3 py-2 rounded-lg transition-colors cursor-pointer">
+                                            <i data-lucide="arrow-left" class="w-4 h-4"></i> Sơ đồ bàn
+                                        </button>
+                                        <h4 id="order-screen-table-title" class="font-bold text-gray-900 text-base">Tên bàn</h4>
+                                        <span id="order-screen-paid-badge" class="hidden bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2 py-0.5 rounded border border-emerald-300 flex items-center gap-1"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i> ĐÃ THANH TOÁN</span>
+                                    </div>
+                                    <div id="group-action-dieuphoi" class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-gray-200">
+                                        <button onclick="executeTableActionDirect('move')" class="bg-amber-500 hover:bg-amber-600 text-white text-[11px] px-2.5 py-1.5 rounded-lg font-medium cursor-pointer">Chuyển bàn</button>
+                                        <button onclick="executeTableActionDirect('add_table')" class="bg-blue-600 hover:bg-blue-700 text-white text-[11px] px-2.5 py-1.5 rounded-lg font-medium cursor-pointer">Ghép bàn</button>
+                                        <button onclick="executeTableActionDirect('merge_invoice')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] px-2.5 py-1.5 rounded-lg font-medium cursor-pointer">Gộp hóa đơn</button>
+                                        <button onclick="executeTableActionDirect('split')" class="bg-rose-500 hover:bg-rose-600 text-white text-[11px] px-2.5 py-1.5 rounded-lg font-medium cursor-pointer">Tách hóa đơn</button>
+                                    </div>
+                                </div>
+
+                                <div id="pos-menu-interaction-zone" class="flex flex-col flex-1 overflow-hidden">
+                                    <div class="flex gap-2 mb-4 overflow-x-auto pb-1 shrink-0">
+                                        <button class="px-3 py-1.5 text-xs font-semibold rounded-full bg-slate-900 text-white whitespace-nowrap">Tất cả</button>
+                                        <button class="px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 whitespace-nowrap">☕ Cà phê</button>
+                                        <button class="px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 whitespace-nowrap">🍵 Trà trái cây</button>
+                                        <button class="px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 whitespace-nowrap">🍰 Bánh ngọt</button>
+                                    </div>
+                                    <div id="pos-menu-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 overflow-y-auto flex-1 content-start pr-1"></div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col overflow-hidden">
+                                <div class="p-4 border-b border-gray-100 bg-slate-50 text-slate-800 font-bold text-sm shrink-0 flex items-center justify-between">
+                                    <div id="pos-cart-header" class="flex items-center gap-2">
+                                        <i data-lucide="shopping-cart" class="w-4 h-4 text-amber-600"></i>Chi tiết món đã gọi của bàn
+                                    </div>
+                                    <button id="btn-add-more-food" onclick="unlockForMoreFood()" class="hidden bg-amber-600 hover:bg-amber-700 text-white text-[11px] px-2 py-1 rounded-lg font-semibold flex items-center gap-1 cursor-pointer">
+                                        <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Gọi thêm món
+                                    </button>
+                                </div>
+
+                                <div id="pos-cart-items" class="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/50"></div>
+
+                                <div id="pos-cart-checkout-panel" class="p-4 border-t border-gray-200 bg-white space-y-2 shrink-0">
+                                    <div class="flex justify-between text-sm text-gray-600">
+                                        <span>Tạm tính:</span>
+                                        <span id="pos-subtotal" class="font-semibold text-gray-900">0đ</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm text-gray-600">
+                                        <span class="flex items-center gap-1"><i data-lucide="ticket" class="w-3.5 h-3.5 text-amber-500"></i>Voucher/VIP:</span>
+                                        <select id="pos-discount" onchange="recalculateCart()" class="text-xs bg-slate-50 border rounded px-1.5 py-0.5 text-gray-700 focus:outline-none">
+                                            <option value="0">Không áp dụng</option>
+                                            <option value="10">Thành viên VIP (-10%)</option>
+                                            <option value="20">Voucher GIAM20 (-20%)</option>
+                                        </select>
+                                    </div>
+                                    <div class="pt-2 border-t border-dashed border-gray-200 flex justify-between text-base font-bold text-gray-900">
+                                        <span>Tổng cộng:</span>
+                                        <span id="pos-total" class="text-red-600">0đ</span>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-3 gap-2 pt-2" id="pos-checkout-actions-group">
+                                        <button onclick="processPayment('TienMat')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium py-2.5 rounded-xl transition-colors flex flex-col items-center justify-center gap-1 shadow-sm cursor-pointer">
+                                            <i data-lucide="banknote" class="w-4 h-4"></i>Tiền mặt
+                                        </button>
+                                        <button onclick="processPayment('ChuyenKhoan')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium py-2.5 rounded-xl transition-colors flex flex-col items-center justify-center gap-1 shadow-sm cursor-pointer">
+                                            <i data-lucide="qr-code" class="w-4 h-4"></i>QR/Thẻ
+                                        </button>
+                                        <button onclick="triggerExceptionFlow()" class="bg-slate-700 hover:bg-slate-800 text-white text-xs font-medium py-2.5 rounded-xl transition-colors flex flex-col items-center justify-center gap-1 cursor-pointer">
+                                            <i data-lucide="alert-triangle" class="w-4 h-4"></i>Đổi/Hủy
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-phache" class="tab-content hidden space-y-4">
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-gray-800">Màn Hình Điều Phối Pha Chế (KDS)</h4>
+                                <p class="text-xs text-gray-500">Món ăn/nước uống đổ về đây theo thời gian thực ngay sau khi thu ngân chốt đơn</p>
+                            </div>
+                            <div class="text-xs bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1.5 rounded-lg font-semibold animate-pulse">
+                                Tự động đồng bộ KDS
+                            </div>
+                        </div>
+                        <div id="kds-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+                    </div>
+
+                    <div id="tab-online" class="tab-content hidden space-y-4">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 w-full">
+                            <h4 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                <i data-lucide="shopping-bag" class="text-blue-500 w-5 h-5"></i>Danh sách đơn đặt trực tuyến (Grab/ShopeeFood/Web-App)
+                            </h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-50 text-xs font-bold text-gray-500 border-b border-gray-200 uppercase">
+                                            <th class="p-3">Mã đơn</th>
+                                            <th class="p-3">Kênh liên kết</th>
+                                            <th class="p-3">Chi tiết món đặt</th>
+                                            <th class="p-3">Tổng thanh toán</th>
+                                            <th class="p-3">Trạng thái</th>
+                                            <th class="p-3 text-right">Hành động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table-online-orders" class="text-xs text-gray-700 divide-y divide-gray-100"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-mon" class="tab-content hidden space-y-6">
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+                                <div>
+                                    <h4 class="font-bold text-gray-800 text-base">Quản lý thực đơn hàng hóa</h4>
+                                    <p class="text-xs text-gray-500">Cấu hình thuộc tính, nhóm món, giá tiền và trạng thái kinh doanh của sản phẩm</p>
+                                </div>
+                                <button onclick="alert('Tính năng nghiệp vụ CMS')" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium px-4 py-2 rounded-lg shadow cursor-pointer flex items-center gap-1.5">
+                                    <i data-lucide="plus" class="w-4 h-4"></i> Thêm món mới
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-50 text-xs font-bold text-gray-500 border-b border-gray-200 uppercase">
+                                            <th class="p-3">Món ăn</th>
+                                            <th class="p-3">Nhóm món</th>
+                                            <th class="p-3">Giá bán</th>
+                                            <th class="p-3">Thuộc tính BOM</th>
+                                            <th class="p-3">Trạng thái kinh doanh</th>
+                                            <th class="p-3 text-right">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table-menu-items" class="text-xs text-gray-700 divide-y divide-gray-100"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-kho" class="tab-content hidden grid grid-cols-1 xl:grid-cols-3 gap-6">
+                        <div class="xl:col-span-2 bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                            <h4 class="font-bold text-gray-800 mb-4">Danh mục nguyên vật liệu tồn kho hiện tại</h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-50 text-xs font-bold text-gray-500 border-b border-gray-200 uppercase">
+                                            <th class="p-3">Nguyên vật liệu</th>
+                                            <th class="p-3">Tồn kho hiện tại</th>
+                                            <th class="p-3">Đơn vị</th>
+                                            <th class="p-3">Ngưỡng tối thiểu</th>
+                                            <th class="p-3">Cảnh báo hệ thống</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table-inventory" class="text-xs text-gray-700 divide-y divide-gray-100"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200 space-y-4">
+                            <h4 class="font-bold text-gray-800 text-sm border-b border-gray-100 pb-2">Cơ chế tự động trừ kho định mức (BOM)</h4>
+                            <div class="text-xs text-gray-600 space-y-3 leading-relaxed">
+                                <p>Hệ thống áp dụng công thức định mức nguyên vật liệu <strong>BOM (Bill of Materials)</strong> khi vận hành:</p>
+                                <div class="bg-slate-50 p-3 rounded-lg border border-gray-200 space-y-1">
+                                    <div class="font-semibold text-gray-800">☕ 1 Ly Cà Phê Sữa:</div>
+                                    <ul class="list-disc list-inside text-[11px] text-gray-500">
+                                        <li>Hạt cà phê Robusta: 25g</li>
+                                        <li>Sữa đặc có đường: 30ml</li>
+                                    </ul>
+                                </div>
+                                <p class="text-red-600 font-medium bg-red-50 p-2.5 rounded border border-red-100">
+                                    ⚠️ Khi nhân viên hoàn tất hóa đơn thanh toán, cấu trúc kho sẽ tự động trừ tương ứng theo thời gian thực. Hệ thống cảnh báo đỏ ngay lập tức nếu kho chạm ngưỡng tối thiểu!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-hoadon" class="tab-content hidden space-y-4">
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                            <h4 class="font-bold text-gray-800 mb-4">Nhật ký hóa đơn & Lưu vết tác động hệ thống (Log)</h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-50 text-xs font-bold text-gray-500 border-b border-gray-200 uppercase">
+                                            <th class="p-3">Mã hóa đơn</th>
+                                            <th class="p-3">Thời gian</th>
+                                            <th class="p-3">Chi tiết thanh toán</th>
+                                            <th class="p-3">Tổng cộng</th>
+                                            <th class="p-3">Trạng thái</th>
+                                            <th class="p-3">Lưu vết hệ thống</th>
+                                            <th class="p-3 text-right">Nghiệp vụ ngoại lệ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table-invoices" class="text-xs text-gray-700 divide-y divide-gray-100"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-baocao" class="tab-content hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                            <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Tổng doanh thu ca</div>
+                            <div id="report-revenue" class="text-2xl font-bold text-slate-800 mt-1">0đ</div>
+                            <div class="text-[10px] text-green-600 mt-1 flex items-center font-medium">Đã bao gồm khấu trừ hoàn trả</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                            <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Số lượng hóa đơn</div>
+                            <div id="report-invoice-count" class="text-2xl font-bold text-slate-800 mt-1">0 đơn</div>
+                            <div class="text-[10px] text-blue-600 mt-1 flex items-center font-medium">Bao gồm cả đơn trực tuyến</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                            <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Tổng số tiền hoàn/hủy</div>
+                            <div id="report-refund" class="text-2xl font-bold text-red-600 mt-1">0đ</div>
+                            <div class="text-[10px] text-gray-500 mt-1 flex items-center font-medium">Được phê duyệt bởi Quản lý</div>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                            <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Số mặt hàng đã bán</div>
+                            <div id="report-items-sold" class="text-2xl font-bold text-emerald-600 mt-1">0 ly</div>
+                            <div class="text-[10px] text-amber-600 mt-1 flex items-center font-medium">Tự động khấu trừ kho thành công</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="modal-product-options" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
+        <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+            <div class="p-4 bg-slate-900 text-white flex justify-between items-center">
+                <div>
+                    <h3 id="option-modal-title" class="font-bold text-sm tracking-wide text-amber-400">Tên món ăn</h3>
+                    <p id="option-modal-base-price" class="text-xs text-gray-400 mt-0.5">Giá gốc: 0đ</p>
+                </div>
+                <button onclick="closeProductOptionsModal()" class="text-gray-400 hover:text-white cursor-pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+
+            <div class="p-5 flex-1 overflow-y-auto space-y-4 text-xs">
+                <div id="wrapper-drink-attributes" class="space-y-4">
+                    <div>
+                        <span class="block font-bold text-gray-700 mb-2 uppercase text-[10px] tracking-wider text-amber-700">1. Lựa chọn Kích cỡ (Size)</span>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label id="opt-size-m-box" class="border-2 border-amber-500 bg-amber-50/40 rounded-xl p-3 flex items-center justify-between cursor-pointer">
+                                <div class="flex items-center gap-2">
+                                    <input type="radio" name="opt-size" value="M" checked onchange="updateOptionModalPrice()" class="accent-amber-600 w-4 h-4">
+                                    <span class="font-bold text-gray-700">Size Vừa (M)</span>
+                                </div>
+                                <span class="font-bold text-gray-400">+0đ</span>
+                            </label>
+                            <label id="opt-size-l-box" class="border border-gray-200 rounded-xl p-3 flex items-center justify-between cursor-pointer hover:border-gray-300">
+                                <div class="flex items-center gap-2">
+                                    <input type="radio" name="opt-size" value="L" onchange="updateOptionModalPrice()" class="accent-amber-600 w-4 h-4">
+                                    <span class="font-bold text-gray-700">Size Lớn (L)</span>
+                                </div>
+                                <span class="font-bold text-amber-600">+10.000đ</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div id="wrapper-topping-selection">
+                        <span class="block font-bold text-gray-700 mb-2 uppercase text-[10px] tracking-wider text-amber-700">2. Topping chọn thêm</span>
+                        <div class="space-y-2">
+                            <label class="flex items-center justify-between p-3 border border-gray-200 rounded-xl bg-white hover:bg-slate-50 cursor-pointer">
+                                <div class="flex items-center gap-2.5">
+                                    <input type="checkbox" name="opt-topping" value="Thạch đào" data-price="8000" onchange="updateOptionModalPrice()" class="w-4 h-4 accent-amber-600 rounded">
+                                    <span class="font-semibold text-gray-700">Thạch đào miếng giòn</span>
+                                </div>
+                                <span class="font-medium text-gray-500">+8.000đ</span>
+                            </label>
+                            <label class="flex items-center justify-between p-3 border border-gray-200 rounded-xl bg-white hover:bg-slate-50 cursor-pointer">
+                                <div class="flex items-center gap-2.5">
+                                    <input type="checkbox" name="opt-topping" value="Trân châu" data-price="12000" onchange="updateOptionModalPrice()" class="w-4 h-4 accent-amber-600 rounded">
+                                    <span class="font-semibold text-gray-700">Trân châu trắng / Cheese</span>
+                                </div>
+                                <span class="font-medium text-gray-500">+12.000đ</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="block font-bold text-gray-700 mb-1.5 uppercase text-[10px] tracking-wider text-amber-700">3. Ghi chú chỉnh sửa riêng</span>
+                        <input id="opt-note" type="text" placeholder="Ít đường 50%, nhiều đá..." class="w-full p-2.5 border border-gray-200 rounded-xl bg-slate-50 focus:bg-white focus:outline-none focus:border-amber-500 text-xs">
+                    </div>
+                </div>
+
+                <div id="wrapper-cake-quantity" class="hidden py-4 flex flex-col items-center justify-center border border-gray-100 rounded-2xl bg-slate-50/50">
+                    <span class="block font-bold text-gray-500 mb-3 uppercase text-[11px] tracking-wider">Số lượng sản phẩm mua</span>
+                    <div class="flex items-center gap-6">
+                        <button onclick="changeModalQty(-1)" class="w-12 h-12 bg-white hover:bg-gray-100 text-gray-800 font-bold border border-gray-200 rounded-xl text-xl flex items-center justify-center cursor-pointer select-none">-</button>
+                        <span id="modal-qty-display" class="text-2xl font-black text-gray-800 w-12 text-center">1</span>
+                        <button onclick="changeModalQty(1)" class="w-12 h-12 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl text-xl flex items-center justify-center cursor-pointer select-none">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 border-t border-gray-100 bg-gray-50 flex items-center justify-between shrink-0">
+                <div>
+                    <span class="text-[9px] text-gray-400 block font-bold uppercase tracking-wider">Tổng số tiền</span>
+                    <span id="opt-modal-total-display" class="text-lg font-black text-amber-600">0đ</span>
+                </div>
+                <button id="btn-submit-options" onclick="submitProductOptions()" class="px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl text-xs shadow-md cursor-pointer">
+                    XÁC NHẬN THÊM MÓN
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-exception" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden">
+            <div class="bg-slate-900 text-white p-4 flex justify-between items-center">
+                <h3 class="font-bold text-sm flex items-center gap-1.5 text-amber-400">
+                    <i data-lucide="shield-alert"></i> Phê duyệt ngoại lệ (Quản lý duyệt)
+                </h3>
+                <button onclick="closeExceptionModal()" class="text-slate-400 hover:text-white cursor-pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="p-3 bg-amber-50 rounded-lg border border-amber-200 text-xs text-amber-800 leading-normal">
+                    Nghiệp vụ yêu cầu cấp quyền duyệt đặc biệt. Vui lòng nhập lý do phát sinh và yêu cầu Quản lý xác nhận mã Pin bảo mật hệ thống.
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">Nghiệp vụ phát sinh</label>
+                    <select id="exception-type" onchange="toggleExceptionUI()" class="w-full text-xs bg-slate-50 border p-2 rounded-lg focus:outline-none">
+                        <option value="doi">Đổi sang món mới</option>
+                        <option value="huy">Hủy hoàn toàn món ăn</option>
+                        <option value="hoantien">Hoàn tiền sau khi đóng hóa đơn</option>
+                    </select>
+                </div>
+                
+                <div id="wrapper-doi-mon" class="space-y-3">
+                    <label class="block text-xs font-bold text-gray-600 mb-1">Chọn món muốn đổi sang</label>
+                    <select id="exception-target-food" class="w-full text-xs bg-slate-50 border p-2 rounded-lg focus:outline-none"></select>
+                </div>
+
+                <div id="wrapper-target-invoice" class="hidden space-y-1">
+                    <label class="block text-xs font-bold text-gray-600 mb-1">Mã hóa đơn đích áp dụng</label>
+                    <input id="exception-invoice-id" type="text" class="w-full text-xs border p-2 rounded-lg bg-gray-100 focus:outline-none font-bold" readonly>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-600 mb-1">Lý do phát sinh nghiệp vụ</label>
+                    <input id="exception-reason" type="text" placeholder="Ví dụ: Khách đổi ý, món làm sai công thức, trả hàng..." class="w-full text-xs border p-2 rounded-lg bg-slate-50 focus:outline-none">
+                </div>
+
+                <div class="p-4 bg-slate-100 rounded-lg border border-gray-200">
+                    <label class="block text-xs font-bold text-gray-700 mb-1">🔒 Xác thực tài khoản cấp cao (Manager Pin)</label>
+                    <div class="flex gap-2">
+                        <input id="exception-pin" type="password" placeholder="Nhập mã pin quản lý" class="bg-white text-xs border px-3 py-1.5 rounded flex-1 focus:outline-none">
+                        <span class="text-[10px] text-gray-400 self-center">Mặc định mã: 123</span>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 bg-gray-50 border-t flex justify-end gap-2">
+                <button onclick="closeExceptionModal()" class="px-4 py-2 text-xs font-semibold bg-gray-200 rounded-lg text-gray-700 cursor-pointer">Đóng</button>
+                <button onclick="submitExceptionFlow()" class="px-4 py-2 text-xs font-semibold bg-red-600 hover:bg-red-700 text-white rounded-lg shadow cursor-pointer">Xác nhận thực hiện</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentActor = 'quanly'; // Tác nhân hiện tại
+        let selectedTableId = null;
+        let isOnline = true;
+        let activeMenuIdForOptions = null;
+        let currentSelectedZone = 'all';
+        let currentModalQty = 1;
+
+        // Ma trận phân quyền theo tác nhân chính và phụ (ACL Map)
+        // Lưu trữ các tab được phép truy cập của từng Role. Nếu không có tên trong mảng => KHÔNG CÓ QUYỀN TRUY CẬP
+        const ACL_PERMISSIONS = {
+            quanly: ['tab-ban', 'tab-phache', 'tab-online', 'tab-mon', 'tab-kho', 'tab-hoadon', 'tab-baocao'],
+            phucvu: ['tab-ban'],
+            thungan: ['tab-ban', 'tab-hoadon'],
+            phache: ['tab-phache']
+        };
+
+        let tables = [
+            { id: 1, name: 'Bàn 1 (Tầng 1)', status: 'Trong', cart: [], discount: 0, isPaid: false },
+            { id: 2, name: 'Bàn 2 (Tầng 1)', status: 'Trong', cart: [], discount: 0, isPaid: false },
+            { id: 3, name: 'Bàn 3 (Tầng 1)', status: 'Trong', cart: [], discount: 0, isPaid: false },
+            { id: 4, name: 'Bàn 4 (Tầng 1)', status: 'Trong', cart: [], discount: 0, isPaid: false },
+            { id: 5, name: 'Bàn 5 (Tầng 2)', status: 'Trong', cart: [], discount: 0, isPaid: false },
+            { id: 6, name: 'Bàn 6 (Tầng 2)', status: 'Trong', cart: [], discount: 0, isPaid: false },
+            { id: 7, name: 'Bàn 7 (Sân vườn)', status: 'Trong', cart: [], discount: 0, isPaid: false },
+            { id: 8, name: 'Bàn 8 (Sân vườn)', status: 'Trong', cart: [], discount: 0, isPaid: false }
+        ];
+
+        let menuItems = [
+            { id: 'M01', name: 'Cà phê Sữa đá', category: 'Ca phe', price: 29000, status: 'Kinh doanh', bom: { 'Hạt Cà phê': 25, 'Sữa đặc': 30 } },
+            { id: 'M02', name: 'Cà phê Đen đá', category: 'Ca phe', price: 25000, status: 'Kinh doanh', bom: { 'Hạt Cà phê': 25 } },
+            { id: 'M03', name: 'Trà Đào Cam Sả', category: 'Tra', price: 35000, status: 'Kinh doanh', bom: { 'Cốt trà': 100, 'Đào miếng': 2 } },
+            { id: 'M04', name: 'Trà Dâu Đông Du', category: 'Tra', price: 39000, status: 'Kinh doanh', bom: { 'Cốt trà': 100, 'Mứt dâu': 40 } },
+            { id: 'M05', name: 'Bánh Croissant', category: 'Banh', price: 30000, status: 'Kinh doanh', bom: { 'Bánh đông lạnh': 1 } },
+            { id: 'M06', name: 'Bánh Tiramisu', category: 'Banh', price: 45000, status: 'Kinh doanh', bom: { 'Bánh làm sẵn': 1 } }
+        ];
+
+        let inventory = [
+            { name: 'Hạt Cà phê', quantity: 5000, unit: 'g', minLimit: 1000 },
+            { name: 'Sữa đặc', quantity: 3000, unit: 'ml', minLimit: 500 },
+            { name: 'Cốt trà', quantity: 10000, unit: 'ml', minLimit: 2000 },
+            { name: 'Đào miếng', quantity: 50, unit: 'miếng', minLimit: 10 },
+            { name: 'Mứt dâu', quantity: 2000, unit: 'ml', minLimit: 400 },
+            { name: 'Bánh đông lạnh', quantity: 15, unit: 'cái', minLimit: 2 },
+            { name: 'Bánh làm sẵn', quantity: 12, unit: 'cái', minLimit: 2 }
+        ];
+
+        let onlineOrders = [
+            { id: 'ONL-8821', platform: 'ShopeeFood', items: '2x Cà phê Sữa đá (Size L)', total: 68000, status: 'ChoXacNhan' },
+            { id: 'ONL-9043', platform: 'GrabFood', items: '1x Trà Đào Cam Sả', total: 35000, status: 'DangChếBiến' }
+        ];
+
+        let invoices = [
+            { id: 'HD-001', time: '07/06/2026 14:20', detail: 'Bàn 3 - 2x Cà phê sữa', total: 58000, status: 'DaThanhToan', log: 'Hệ thống tự động xuất HĐĐT.' }
+        ];
+
+        let kdsQueue = [];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderSoDoBan();
+            renderMenuList();
+            renderInventoryTable();
+            renderInvoiceLog();
+            renderOnlineOrdersTable();
+            renderKDS();
+            updateDashboardReports();
+            setInterval(() => { lucide.createIcons(); }, 500);
+        });
+
+        function handleLogin() {
+            currentActor = document.getElementById('login-username').value;
+            document.getElementById('screen-login').classList.add('hidden');
+            document.getElementById('screen-main').classList.remove('hidden');
+            document.getElementById('user-tag').innerText = 'Quyền: ' + currentActor.toUpperCase();
+
+            // Chuyển hướng về tab mặc định tương thích với từng vai trò
+            if(currentActor === 'phache') {
+                switchTab('tab-phache');
+            } else {
+                switchTab('tab-ban');
+            }
+        }
+
+        function handleLogout() {
+            document.getElementById('screen-main').classList.add('hidden');
+            document.getElementById('screen-login').classList.remove('hidden');
+        }
+
+        function switchTab(tabId) {
+            // Kiểm tra phân luồng quyền hạn tác nhân chính (ACL Check)
+            const allowedTabs = ACL_PERMISSIONS[currentActor] || [];
+            const mainWrapper = document.getElementById('main-tab-wrapper');
+            const deniedWidget = document.getElementById('acl-denied-widget');
+
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+
+            if (!allowedTabs.includes(tabId)) {
+                // Hiển thị giao diện Chặn truy cập quyền nghiệp vụ
+                mainWrapper.classList.add('hidden');
+                deniedWidget.classList.remove('hidden');
+            } else {
+                mainWrapper.classList.remove('hidden');
+                deniedWidget.classList.add('hidden');
+                const targetTab = document.getElementById(tabId);
+                if (targetTab) targetTab.classList.remove('hidden');
+            }
+
+            const titleMap = {
+                'tab-ban': 'Sơ đồ bàn & Gọi món',
+                'tab-phache': 'Quầy pha chế (KDS)',
+                'tab-online': 'Đơn trực tuyến',
+                'tab-mon': 'Thiết lập thực đơn',
+                'tab-kho': 'Quản lý kho (BOM)',
+                'tab-hoadon': 'Nhật ký hóa đơn',
+                'tab-baocao': 'Thống kê báo cáo'
+            };
+            document.getElementById('current-tab-title').innerText = titleMap[tabId] || 'Hệ thống';
+        }
+
+        function filterZone(zone) {
+            currentSelectedZone = zone;
+            document.querySelectorAll('.zone-filter-btn').forEach(btn => {
+                btn.className = "zone-filter-btn px-3 py-1.5 text-xs font-medium rounded-lg text-gray-600 hover:bg-gray-100 whitespace-nowrap cursor-pointer";
+            });
+            if(zone === 'all') document.getElementById('btn-zone-all').className = "zone-filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-600 text-white whitespace-nowrap cursor-pointer";
+            if(zone === 'Tầng 1') document.getElementById('btn-zone-t1').className = "zone-filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-600 text-white whitespace-nowrap cursor-pointer";
+            if(zone === 'Tầng 2') document.getElementById('btn-zone-t2').className = "zone-filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-600 text-white whitespace-nowrap cursor-pointer";
+            if(zone === 'Sân vườn') document.getElementById('btn-zone-sv').className = "zone-filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-600 text-white whitespace-nowrap cursor-pointer";
+            renderSoDoBan();
+        }
+
+        function createTakeAwayOrder() {
+            // Chặn quyền gọi món mang đi của tài khoản Pha chế
+            if(currentActor === 'phache') {
+                alert('Tài khoản Pha chế không có quyền khởi tạo đơn hàng!');
+                return;
+            }
+            const takeAwayId = 'TA-' + Math.floor(1000 + Math.random() * 9000);
+            const newTakeAwayOrder = {
+                id: takeAwayId,
+                name: `Đơn Mang Về (${takeAwayId})`,
+                status: 'DangDung',
+                cart: [],
+                discount: 0,
+                isPaid: false,
+                isTakeAway: true
+            };
+            tables.push(newTakeAwayOrder);
+            openOrderScreen(takeAwayId);
+        }
+
+        function renderSoDoBan() {
+            const grid = document.getElementById('grid-tables');
+            grid.innerHTML = '';
+
+            tables.forEach(tb => {
+                if (tb.isTakeAway && tb.isPaid) return;
+                if (!tb.isTakeAway && currentSelectedZone !== 'all' && !tb.name.includes(currentSelectedZone)) return; 
+
+                let statusBg = 'bg-gray-100 border-gray-300';
+                let textState = 'Trống';
+                let btnActionText = 'Khởi tạo đơn hàng';
+                let btnClass = 'bg-slate-800 hover:bg-slate-700 text-white';
+
+                if (tb.isTakeAway) {
+                    statusBg = 'bg-emerald-50 border-emerald-300 ring-2 ring-emerald-500/20';
+                    textState = 'Khách mang đi';
+                    btnActionText = 'Vào chọn món / Chốt đơn';
+                    btnClass = 'bg-emerald-600 hover:bg-emerald-700 text-white';
+                } else if (tb.status === 'DangDung') {
+                    statusBg = 'bg-blue-50 border-blue-300 ring-2 ring-blue-500/20';
+                    textState = tb.isPaid ? 'Đang phục vụ món' : 'Đang dùng';
+                    btnActionText = 'Vào gọi món / Tính tiền';
+                    btnClass = 'bg-blue-600 hover:bg-blue-700 text-white';
+                } else if (tb.status === 'ChoDon') {
+                    statusBg = 'bg-purple-50 border-purple-300';
+                    textState = 'Đang phục vụ món'; 
+                    btnActionText = 'Xác nhận dọn bàn';
+                    btnClass = 'bg-amber-500 hover:bg-amber-600 text-white';
+                }
+
+                if (!tb.isTakeAway && tb.isPaid) {
+                    if (tb.status === 'DangDung') {
+                        btnActionText = 'Báo dọn bàn';
+                        btnClass = 'bg-purple-600 hover:bg-purple-700 text-white';
+                    } else if (tb.status === 'ChoDon') {
+                        btnActionText = 'Xác nhận dọn bàn';
+                        btnClass = 'bg-amber-500 hover:bg-amber-600 text-white';
+                    }
+                }
+
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-xl border flex flex-col justify-between transition-all ${statusBg}`;
+                card.innerHTML = `
+                    <div onclick="openOrderScreen('${tb.id}')" class="cursor-pointer">
+                        <div class="flex justify-between items-start">
+                            <span class="font-bold text-gray-900 text-sm">${tb.name}</span>
+                            <span class="w-2.5 h-2.5 rounded-full ${tb.status=='Trong'?'bg-gray-400':(tb.isPaid?'bg-emerald-500':'bg-blue-500')}"></span>
+                        </div>
+                        <div class="mt-2 flex flex-wrap items-center gap-1.5">
+                            <span class="text-[11px] font-medium text-gray-500">${textState}</span>
+                            ${tb.isPaid ? `<span class="bg-emerald-100 text-emerald-800 text-[9px] font-bold px-1.5 py-0.5 rounded border border-emerald-200">ĐÃ T.TOÁN</span>` : ''}
+                        </div>
+                        <div class="text-[11px] text-gray-400 mt-1">Giỏ hàng: ${tb.cart.length} món</div>
+                    </div>
+                    <button onclick="handleTableStateCycle('${tb.id}')" class="w-full text-center text-[11px] font-bold py-2 mt-4 rounded-lg shadow-xs transition-colors cursor-pointer ${btnClass}">
+                        ${btnActionText}
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function handleTableStateCycle(tableId) {
+            // Nghiệp vụ dọn bàn và mở bàn bị chặn đối với tài khoản pha chế
+            if (currentActor === 'phache') {
+                alert('Tài khoản Pha chế không được cấu hình sơ đồ phục vụ bàn!');
+                return;
+            }
+            const tb = tables.find(t => t.id == tableId);
+            if (!tb) return;
+
+            if (tb.isTakeAway) {
+                openOrderScreen(tableId);
+                return;
+            }
+
+            if (tb.status === 'Trong') {
+                tb.status = 'DangDung';
+                tb.isPaid = false;
+                tb.cart = [];
+                renderSoDoBan();
+                openOrderScreen(tableId);
+            } else if (tb.status === 'DangDung') {
+                if (tb.isPaid) {
+                    tb.status = 'ChoDon';
+                    renderSoDoBan();
+                } else {
+                    openOrderScreen(tableId);
+                }
+            } else if (tb.status === 'ChoDon') {
+                tb.status = 'Trong';
+                tb.isPaid = false;
+                tb.cart = [];
+                renderSoDoBan();
+                alert(`Bàn đã dọn sạch. Sẵn sàng đón lượt khách mới!`);
+            }
+        }
+
+        function openOrderScreen(tableId) {
+            if (currentActor === 'phache') {
+                alert('Tài khoản Pha chế không có quyền gọi món/chốt tiền!');
+                return;
+            }
+            selectedTableId = tableId;
+            const tb = tables.find(t => t.id == tableId);
+            if (!tb) return;
+
+            document.getElementById('panel-sodo-ban').classList.add('hidden');
+            document.getElementById('panel-order-chuyenbiet').classList.remove('hidden');
+            document.getElementById('order-screen-table-title').innerText = tb.name;
+
+            // Phân luồng chặn chức năng điều phối bàn (Thu ngân / Phục vụ không có quyền quản lý nâng cao này)
+            if (tb.isTakeAway || currentActor === 'phucvu' || currentActor === 'thungan') {
+                document.getElementById('group-action-dieuphoi').classList.add('hidden');
+            } else {
+                document.getElementById('group-action-dieuphoi').classList.remove('hidden');
+            }
+
+            // Chặn nhân viên Thu ngân chọn món (Chỉ được xử lý thanh toán)
+            if(currentActor === 'thungan') {
+                document.getElementById('pos-menu-interaction-zone').classList.add('pointer-events-none', 'opacity-40');
+            } else {
+                document.getElementById('pos-menu-interaction-zone').classList.remove('pointer-events-none', 'opacity-40');
+            }
+
+            if (tb.isPaid) {
+                document.getElementById('order-screen-paid-badge').classList.remove('hidden');
+                document.getElementById('pos-menu-interaction-zone').classList.add('pointer-events-none', 'opacity-40');
+                document.getElementById('pos-cart-header').innerHTML = `<i data-lucide="history" class="w-4 h-4 text-emerald-600"></i> LỊCH SỬ GỌI MÓN (ĐÃ THANH TOÁN)`;
+                document.getElementById('pos-cart-checkout-panel').classList.add('bg-emerald-50/50');
+                document.getElementById('pos-checkout-actions-group').classList.add('hidden');
+                document.getElementById('btn-add-more-food').classList.remove('hidden'); 
+            } else {
+                document.getElementById('order-screen-paid-badge').classList.add('hidden');
+                document.getElementById('pos-cart-header').innerHTML = `<i data-lucide="shopping-cart" class="w-4 h-4 text-amber-600"></i> Chi tiết món đã gọi của bàn`;
+                document.getElementById('pos-cart-checkout-panel').classList.remove('bg-emerald-50/50');
+                document.getElementById('pos-checkout-actions-group').classList.remove('hidden');
+                document.getElementById('btn-add-more-food').classList.add('hidden'); 
+            }
+
+            renderPOSMenu();
+            renderCartItems();
+        }
+
+        function executeTableActionDirect(actionType) {
+            if (currentActor !== 'quanly') {
+                alert('Tính năng đổi/chuyển/ghép gộp thuộc quyền hạn của Quản lý!');
+                return;
+            }
+            const srcTable = tables.find(t => t.id == selectedTableId);
+            if (!srcTable) return;
+
+            let promptMsg = "";
+            if (actionType === 'move') promptMsg = "Nhập số bàn muốn CHUYỂN đến (Ví dụ: 2, 5):";
+            else if (actionType === 'add_table') promptMsg = "Nhập số bàn muốn GHÉP đôi cùng (Ví dụ: 3):";
+            else if (actionType === 'merge_invoice') promptMsg = "Nhập số bàn muốn GỘP HÓA ĐƠN chung vào (Ví dụ: 4):";
+            else if (actionType === 'split') promptMsg = "Nhập số bàn nhận món khi TÁCH HÓA ĐƠN (Ví dụ: 6):";
+
+            const targetTableNum = prompt(promptMsg);
+            if (!targetTableNum) return;
+
+            const dstTable = tables.find(t => t.id == targetTableNum || t.name.includes(`Bàn ${targetTableNum}`));
+            if (!dstTable) {
+                alert("Bàn đích không tồn tại trên hệ thống!");
+                return;
+            }
+
+            if (actionType === 'move') {
+                if (dstTable.status !== 'Trong') { alert("Yêu cầu bàn đích phải là bàn trống!"); return; }
+                dstTable.cart = [...srcTable.cart];
+                dstTable.discount = srcTable.discount;
+                dstTable.status = 'DangDung';
+                dstTable.isPaid = srcTable.isPaid;
+                srcTable.cart = []; srcTable.status = 'Trong'; srcTable.isPaid = false;
+                backToSoDoBan();
+            } 
+            else if (actionType === 'add_table' || actionType === 'merge_invoice') {
+                if (dstTable.status === 'Trong') dstTable.status = 'DangDung';
+                srcTable.cart.forEach(srcItem => {
+                    const matched = dstTable.cart.find(dItem => dItem.id === srcItem.id && dItem.size === srcItem.size);
+                    if (matched) matched.qty += srcItem.qty;
+                    else dstTable.cart.push({...srcItem});
+                });
+                if (srcTable.isPaid) dstTable.isPaid = true;
+                srcTable.cart = []; srcTable.status = 'Trong'; srcTable.isPaid = false;
+                backToSoDoBan();
+            } 
+            else if (actionType === 'split') {
+                if (srcTable.cart.length === 0) return;
+                const itemToSplit = srcTable.cart[0];
+                if (dstTable.status === 'Trong') dstTable.status = 'DangDung';
+                const matched = dstTable.cart.find(dItem => dItem.id === itemToSplit.id && dItem.size === itemToSplit.size);
+                if (matched) matched.qty += 1;
+                else dstTable.cart.push({...itemToSplit, qty: 1});
+                if (itemToSplit.qty > 1) itemToSplit.qty -= 1;
+                else srcTable.cart.shift();
+                openOrderScreen(selectedTableId);
+            }
+        }
+
+        function unlockForMoreFood() {
+            // Phục vụ hoặc quản lý được gọi thêm món, thu ngân bị chặn
+            if(currentActor === 'thungan') {
+                alert('Thu ngân không có quyền kích hoạt tính năng gọi thêm món!');
+                return;
+            }
+            const tb = tables.find(t => t.id == selectedTableId);
+            if (!tb) return;
+            tb.isPaid = false;
+            openOrderScreen(selectedTableId);
+        }
+
+        function backToSoDoBan() {
+            selectedTableId = null;
+            document.getElementById('panel-order-chuyenbiet').classList.add('hidden');
+            document.getElementById('panel-sodo-ban').classList.remove('hidden');
+            renderSoDoBan();
+        }
+
+        function renderPOSMenu() {
+            const grid = document.getElementById('pos-menu-grid');
+            grid.innerHTML = '';
+            menuItems.forEach(item => {
+                if (item.status !== 'Kinh doanh') return;
+                const card = document.createElement('div');
+                card.className = "bg-slate-50 border border-gray-200 p-3 rounded-xl hover:shadow-md cursor-pointer transition-all flex flex-col justify-between";
+                card.onclick = () => openProductOptionsModal(item.id);
+                card.innerHTML = `
+                    <div>
+                        <div class="font-bold text-gray-800 text-xs">${item.name}</div>
+                        <div class="text-[10px] text-gray-400 mt-0.5">${item.category === 'Ca phe' ? '☕ Cà phê' : (item.category === 'Tra' ? '🍵 Trà' : '🍰 Bánh')}</div>
+                    </div>
+                    <div class="flex justify-between items-center mt-3 pt-2 border-t border-gray-100">
+                        <span class="font-bold text-amber-600 text-xs">${item.price.toLocaleString()}đ</span>
+                        <span class="bg-amber-100 text-amber-800 p-1 rounded-lg"><i data-lucide="plus" class="w-3.5 h-3.5"></i></span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderCartItems() {
+            const container = document.getElementById('pos-cart-items');
+            container.innerHTML = '';
+            const tb = tables.find(t => t.id == selectedTableId);
+            if (!tb || tb.cart.length === 0) {
+                container.innerHTML = `<div class="text-center text-gray-400 text-xs py-8">Chưa có sản phẩm nào trong danh sách</div>`;
+                recalculateCart();
+                return;
+            }
+
+            tb.cart.forEach((item, index) => {
+                const row = document.createElement('div');
+                row.className = "bg-white p-3 rounded-xl border border-gray-200 shadow-xs flex flex-col gap-1";
+                
+                const controlsUI = tb.isPaid ? `
+                    <span class="text-xs font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border">Số lượng: ${item.qty}</span>
+                ` : `
+                    <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden bg-white">
+                        <button onclick="updateCartQty(${index}, -1)" class="px-2 py-1 text-gray-500 hover:bg-gray-100">-</button>
+                        <span class="px-3 text-xs font-bold text-gray-800 bg-gray-50">${item.qty}</span>
+                        <button onclick="updateCartQty(${index}, 1)" class="px-2 py-1 text-gray-500 hover:bg-gray-100">+</button>
+                    </div>
+                `;
+
+                const sizeBadge = item.isCake ? '' : ` <span class="text-amber-600 font-extrabold">[Size ${item.size}]</span>`;
+
+                row.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="font-bold text-gray-800 text-xs">${item.name}${sizeBadge}</div>
+                            ${item.toppings.length ? `<div class="text-[10px] text-gray-400 font-medium">+ Topping: ${item.toppings.join(', ')}</div>` : ''}
+                            ${item.note ? `<div class="text-[10px] text-blue-500 italic mt-0.5">"${item.note}"</div>` : ''}
+                        </div>
+                        <span class="font-bold text-gray-900 text-xs">${(item.singlePrice * item.qty).toLocaleString()}đ</span>
+                    </div>
+                    <div class="flex justify-between items-center mt-2 pt-1.5 border-t border-dashed border-gray-100">
+                        ${controlsUI}
+                        ${tb.isPaid ? '' : `<button onclick="removeCartItem(${index})" class="text-[11px] text-red-500 font-semibold hover:underline cursor-pointer">Xóa món</button>`}
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+
+            document.getElementById('pos-discount').value = tb.discount;
+            recalculateCart();
+        }
+
+        function updateCartQty(index, delta) {
+            const tb = tables.find(t => t.id == selectedTableId);
+            if (!tb || tb.isPaid) return;
+            tb.cart[index].qty += delta;
+            if (tb.cart[index].qty <= 0) tb.cart.splice(index, 1);
+            renderCartItems();
+        }
+
+        function removeCartItem(index) {
+            const tb = tables.find(t => t.id == selectedTableId);
+            if (!tb || tb.isPaid) return;
+            tb.cart.splice(index, 1);
+            renderCartItems();
+        }
+
+        function recalculateCart() {
+            const tb = tables.find(t => t.id == selectedTableId);
+            if (!tb) return;
+
+            let subtotal = 0;
+            tb.cart.forEach(item => { subtotal += (item.singlePrice * item.qty); });
+            const discPercent = parseInt(document.getElementById('pos-discount').value) || 0;
+            tb.discount = discPercent;
+            const total = subtotal * (1 - discPercent / 100);
+
+            document.getElementById('pos-subtotal').innerText = subtotal.toLocaleString() + 'đ';
+            document.getElementById('pos-total').innerText = total.toLocaleString() + 'đ';
+        }
+
+        function openProductOptionsModal(menuId) {
+            const tb = tables.find(t => t.id == selectedTableId);
+            if((tb && tb.isPaid) || currentActor === 'thungan') return; 
+
+            activeMenuIdForOptions = menuId;
+            const item = menuItems.find(m => m.id === menuId);
+            if (!item) return;
+
+            document.getElementById('option-modal-title').innerText = item.name;
+            document.getElementById('option-modal-base-price').innerText = `Giá gốc: ${item.price.toLocaleString()}đ`;
+            document.getElementById('opt-note').value = '';
+            document.querySelectorAll('input[name="opt-topping"]').forEach(cb => cb.checked = false);
+            document.querySelector('input[name="opt-size"][value="M"]').checked = true;
+
+            currentModalQty = 1;
+            document.getElementById('modal-qty-display').innerText = currentModalQty;
+
+            const drinkWrapper = document.getElementById('wrapper-drink-attributes');
+            const cakeWrapper = document.getElementById('wrapper-cake-quantity');
+
+            if (item.category === 'Banh') {
+                drinkWrapper.classList.add('hidden');
+                cakeWrapper.classList.remove('hidden');
+            } else {
+                drinkWrapper.classList.remove('hidden');
+                cakeWrapper.classList.add('hidden');
+            }
+
+            document.getElementById('modal-product-options').classList.remove('hidden');
+            updateOptionModalPrice();
+        }
+
+        function changeModalQty(delta) {
+            currentModalQty += delta;
+            if (currentModalQty < 1) currentModalQty = 1; 
+            document.getElementById('modal-qty-display').innerText = currentModalQty;
+            updateOptionModalPrice();
+        }
+
+        function closeProductOptionsModal() {
+            document.getElementById('modal-product-options').classList.add('hidden');
+        }
+
+        function updateOptionModalPrice() {
+            const item = menuItems.find(m => m.id === activeMenuIdForOptions);
+            if (!item) return;
+            let singlePrice = item.price;
+
+            if (item.category === 'Banh') {
+                document.getElementById('opt-modal-total-display').innerText = (singlePrice * currentModalQty).toLocaleString() + 'đ';
+            } else {
+                const sizeValue = document.querySelector('input[name="opt-size"]:checked').value;
+                if (sizeValue === 'L') singlePrice += 10000;
+                document.querySelectorAll('input[name="opt-topping"]:checked').forEach(cb => {
+                    singlePrice += parseInt(cb.getAttribute('data-price')) || 0;
+                });
+                document.getElementById('opt-modal-total-display').innerText = singlePrice.toLocaleString() + 'đ';
+            }
+        }
+
+        function submitProductOptions() {
+            const tb = tables.find(t => t.id == selectedTableId);
+            const item = menuItems.find(m => m.id === activeMenuIdForOptions);
+            if (!tb || !item) return;
+
+            if (item.category === 'Banh') {
+                const existingIndex = tb.cart.findIndex(c => c.id === item.id && c.isCake === true);
+                if (existingIndex > -1) tb.cart[existingIndex].qty += currentModalQty;
+                else {
+                    tb.cart.push({
+                        id: item.id, name: item.name, size: 'M', toppings: [], note: '', qty: currentModalQty, singlePrice: item.price, isCake: true
+                    });
+                }
+            } else {
+                const sizeValue = document.querySelector('input[name="opt-size"]:checked').value;
+                let singlePrice = item.price;
+                if (sizeValue === 'L') singlePrice += 10000;
+
+                let chosenToppings = [];
+                document.querySelectorAll('input[name="opt-topping"]:checked').forEach(cb => {
+                    chosenToppings.push(cb.value);
+                    singlePrice += parseInt(cb.getAttribute('data-price')) || 0;
+                });
+                const noteText = document.getElementById('opt-note').value;
+
+                const existingIndex = tb.cart.findIndex(c => c.id === item.id && c.size === sizeValue && c.note === noteText && JSON.stringify(c.toppings) === JSON.stringify(chosenToppings));
+                if (existingIndex > -1) tb.cart[existingIndex].qty += 1;
+                else {
+                    tb.cart.push({
+                        id: item.id, name: item.name, size: sizeValue, toppings: chosenToppings, note: noteText, qty: 1, singlePrice: singlePrice, isCake: false
+                    });
+                }
+            }
+            closeProductOptionsModal();
+            renderCartItems();
+        }
+
+        function processPayment(paymentMethod) {
+            // Nhân viên phục vụ không được trực tiếp bấm thu tiền chốt hóa đơn
+            if (currentActor === 'phucvu') {
+                alert('Nghiệp vụ thanh toán thuộc vai trò của Thu ngân hoặc Quản lý!');
+                return;
+            }
+            const tb = tables.find(t => t.id == selectedTableId);
+            if (!tb || tb.cart.length === 0) return;
+
+            let subtotal = 0;
+            tb.cart.forEach(item => { subtotal += (item.singlePrice * item.qty); });
+            const total = subtotal * (1 - tb.discount / 100);
+
+            let checkKhoPassed = true;
+            tb.cart.forEach(cartItem => {
+                const menuItem = menuItems.find(m => m.id === cartItem.id);
+                if (menuItem && menuItem.bom) {
+                    for (const [matName, reqQty] of Object.entries(menuItem.bom)) {
+                        const invItem = inventory.find(i => i.name === matName);
+                        if (invItem && invItem.quantity < (reqQty * cartItem.qty)) checkKhoPassed = false;
+                    }
+                }
+            });
+
+            if (!checkKhoPassed && isOnline) {
+                alert('⚠️ CẢNH BÁO KHO: Định mức nguyên vật liệu trong kho (BOM) không đủ!');
+                return;
+            }
+
+            // Khấu trừ nguyên vật liệu kho tự động (UC06)
+            tb.cart.forEach(cartItem => {
+                const menuItem = menuItems.find(m => m.id === cartItem.id);
+                if (menuItem && menuItem.bom) {
+                    for (const [matName, reqQty] of Object.entries(menuItem.bom)) {
+                        const invItem = inventory.find(i => i.name === matName);
+                        if (invItem) invItem.quantity = Math.max(0, invItem.quantity - (reqQty * cartItem.qty));
+                    }
+                }
+            });
+
+            const hdId = 'HD-' + Math.floor(1000 + Math.random() * 9000);
+            let itemsSummary = tb.cart.map(i => `${i.qty}x ${i.name}`).join(', ');
+            
+            invoices.unshift({
+                id: hdId,
+                time: new Date().toLocaleString('vi-VN'),
+                detail: `${tb.name} - ${itemsSummary}`,
+                total: total,
+                status: 'DaThanhToan',
+                log: `Thanh toán qua ${paymentMethod === 'TienMat'?'Tiền mặt':'QR'}. Nhân viên: ${currentActor.toUpperCase()}`
+            });
+
+            kdsQueue.push({
+                id: hdId, origin: tb.isTakeAway ? "MANG VỀ" : tb.name, items: tb.cart.map(i => `${i.qty} phần ${i.name} ${i.isCake ? '' : '[Size ' + i.size + ']'} ${i.note?'('+i.note+')':''}`)
+            });
+
+            tb.isPaid = true;
+            alert(`Thanh toán thành công hóa đơn ${hdId}: ${total.toLocaleString()}đ!`);
+            
+            renderInventoryTable();
+            renderInvoiceLog();
+            renderKDS();
+            updateDashboardReports();
+            backToSoDoBan();
+        }
+
+        // KÍCH HOẠT PHÂN LUỒNG NGOẠI LỆ CHO ĐƠN ĐANG CHỌN (TRƯỚC/SAU THANH TOÁN)
+        function triggerExceptionFlow() {
+            const tb = tables.find(t => t.id == selectedTableId);
+            if (!tb || tb.cart.length === 0) return;
+
+            const targetSelect = document.getElementById('exception-target-food');
+            targetSelect.innerHTML = '';
+            menuItems.forEach(m => {
+                if(m.status === 'Kinh doanh') {
+                    targetSelect.innerHTML += `<option value="${m.id}">${m.name} (${m.price.toLocaleString()}đ)</option>`;
+                }
+            });
+            document.getElementById('exception-type').value = "doi";
+            document.getElementById('modal-exception').classList.remove('hidden');
+            toggleExceptionUI();
+        }
+
+        // KÍCH HOẠT PHÂN LUỒNG NGOẠI LỆ CHO HOÀN TIỀN HÓA ĐƠN ĐÃ CHỐT (UC12)
+        function triggerRefundInvoiceFlow(invoiceId) {
+            const inv = invoices.find(i => i.id === invoiceId);
+            if (!inv) return;
+            if (inv.status === 'DaHoanTien') {
+                alert('Hóa đơn này đã được xử lý hoàn tiền trước đó!');
+                return;
+            }
+
+            document.getElementById('exception-type').value = "hoantien";
+            document.getElementById('exception-invoice-id').value = invoiceId;
+            document.getElementById('modal-exception').classList.remove('hidden');
+            toggleExceptionUI();
+        }
+
+        function closeExceptionModal() {
+            document.getElementById('modal-exception').classList.add('hidden');
+        }
+
+        function toggleExceptionUI() {
+            const type = document.getElementById('exception-type').value;
+            const doiWrapper = document.getElementById('wrapper-doi-mon');
+            const hoadonWrapper = document.getElementById('wrapper-target-invoice');
+
+            if(type === 'doi') {
+                doiWrapper.classList.remove('hidden');
+                hoadonWrapper.classList.add('hidden');
+            } else if(type === 'hoantien') {
+                doiWrapper.classList.add('hidden');
+                hoadonWrapper.classList.remove('hidden');
+            } else {
+                doiWrapper.classList.add('hidden');
+                hoadonWrapper.classList.add('hidden');
+            }
+        }
+
+        function submitExceptionFlow() {
+            // Chặn chặt chẽ: Bắt buộc mã pin Quản lý bảo mật cấp cao (123)
+            const pin = document.getElementById('exception-pin').value;
+            if (pin !== '123') {
+                alert('Mã Pin duyệt của Quản lý không chính xác! Không thể thực thi.');
+                return;
+            }
+
+            const type = document.getElementById('exception-type').value;
+            const reason = document.getElementById('exception-reason').value || 'Yêu cầu ngoại lệ hệ thống';
+            
+            // XỬ LÝ UC12: HOÀN TIỀN SAU KHI ĐÃ ĐÓNG HÓA ĐƠN
+            if (type === 'hoantien') {
+                const targetId = document.getElementById('exception-invoice-id').value;
+                const inv = invoices.find(i => i.id === targetId);
+                if(inv) {
+                    inv.status = 'DaHoanTien';
+                    inv.log = `Đã hoàn tiền thành công. Quản lý duyệt lý do: ${reason}`;
+                    alert(`Hệ thống đã phê duyệt lệnh Hoàn tiền cho hóa đơn ${targetId}!`);
+                }
+            } 
+            // XỬ LÝ UC10 & UC11 TRONG GIỎ HÀNG BÀN PHỤC VỤ
+            else {
+                const tb = tables.find(t => t.id == selectedTableId);
+                if (!tb || tb.cart.length === 0) return;
+
+                if (type === 'huy') {
+                    // Hoàn nguyên nguyên vật liệu về kho định mức (BOM)
+                    tb.cart.forEach(cartItem => {
+                        const menuItem = menuItems.find(m => m.id === cartItem.id);
+                        if (menuItem && menuItem.bom) {
+                            for (const [matName, reqQty] of Object.entries(menuItem.bom)) {
+                                const invItem = inventory.find(i => i.name === matName);
+                                if (invItem) invItem.quantity += (reqQty * cartItem.qty);
+                            }
+                        }
+                    });
+
+                    invoices.unshift({
+                        id: 'REF-' + Math.floor(1000 + Math.random() * 9000),
+                        time: new Date().toLocaleString('vi-VN'),
+                        detail: `HOÀN HỦY: ${tb.name}`,
+                        total: 0,
+                        status: 'DaHoanTien',
+                        log: `Hủy món trực tiếp. Lý do: ${reason}`
+                    });
+
+                    tb.cart = []; tb.status = 'Trong'; tb.isPaid = false;
+                    backToSoDoBan();
+                } else if (type === 'doi') {
+                    const targetFoodId = document.getElementById('exception-target-food').value;
+                    const newItem = menuItems.find(m => m.id === targetFoodId);
+                    if(newItem) {
+                        tb.cart = [{
+                            id: newItem.id, name: newItem.name, size: 'M', toppings: [], note: `Đổi món món: ${reason}`, qty: 1, singlePrice: newItem.price, isCake: newItem.category === 'Banh'
+                        }];
+                        tb.isPaid = false; 
+                    }
+                }
+            }
+
+            closeExceptionModal();
+            if(selectedTableId) renderCartItems();
+            renderInventoryTable();
+            renderInvoiceLog();
+            updateDashboardReports();
+        }
+
+        function renderMenuList() {
+            const tbody = document.getElementById('table-menu-items');
+            tbody.innerHTML = '';
+            menuItems.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-gray-100 hover:bg-slate-50";
+                let bomDesc = [];
+                for (const [k, v] of Object.entries(item.bom)) { bomDesc.push(`${k}:${v}`); }
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold text-gray-900">${item.name}</td>
+                    <td class="p-3 text-gray-500">${item.category}</td>
+                    <td class="p-3 font-bold text-amber-600">${item.price.toLocaleString()}đ</td>
+                    <td class="p-3 text-gray-400 text-[11px]">${bomDesc.join(', ')}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${item.status==='Kinh doanh'?'bg-green-100 text-green-800':'bg-red-100 text-red-800'}">${item.status}</span></td>
+                    <td class="p-3 text-right"><button onclick="alert('CMS Connected')" class="text-blue-600 hover:underline font-medium cursor-pointer">Sửa</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderInventoryTable() {
+            const tbody = document.getElementById('table-inventory');
+            tbody.innerHTML = '';
+            inventory.forEach(item => {
+                const isAlert = item.quantity <= item.minLimit;
+                const tr = document.createElement('tr');
+                tr.className = `border-b border-gray-100 hover:bg-slate-50 ${isAlert?'bg-red-50/50':''}`;
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold text-gray-800">${item.name}</td>
+                    <td class="p-3 font-bold ${isAlert?'text-red-600':'text-gray-900'}">${item.quantity.toLocaleString()}</td>
+                    <td class="p-3 text-gray-500">${item.unit}</td>
+                    <td class="p-3 text-gray-400">${item.minLimit}</td>
+                    <td class="p-3">${isAlert ? `<span class="bg-red-100 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 w-max">Chạm ngưỡng tối thiểu</span>` : `<span class="text-green-600 text-[11px] font-medium">An toàn</span>`}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderInvoiceLog() {
+            const tbody = document.getElementById('table-invoices');
+            tbody.innerHTML = '';
+            invoices.forEach(inv => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-gray-100 text-xs";
+                
+                // Hiển thị nút hoàn tiền nghiệp vụ UC12 dựa theo trạng thái hóa đơn
+                let actionBtnUI = inv.status === 'DaThanhToan' ? 
+                    `<button onclick="triggerRefundInvoiceFlow('${inv.id}')" class="bg-red-600 hover:bg-red-700 text-white text-[11px] px-2 py-1 rounded font-bold transition-colors cursor-pointer">Hoàn tiền HĐ</button>` : 
+                    `<span class="text-gray-400 italic">Đã xử lý hoàn</span>`;
+
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-gray-800">${inv.id}</td>
+                    <td class="p-3 text-gray-400 whitespace-nowrap">${inv.time}</td>
+                    <td class="p-3 text-gray-700">${inv.detail}</td>
+                    <td class="p-3 font-bold text-gray-900">${inv.total.toLocaleString()}đ</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${inv.status==='DaThanhToan'?'bg-green-100 text-green-800':'bg-red-100 text-red-800'}">${inv.status==='DaThanhToan'?'Thành công':'Đã Hoàn/Hủy'}</span></td>
+                    <td class="p-3 text-slate-500 italic text-[11px]">${inv.log}</td>
+                    <td class="p-3 text-right">${actionBtnUI}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderOnlineOrdersTable() {
+            const tbody = document.getElementById('table-online-orders');
+            tbody.innerHTML = '';
+            onlineOrders.forEach(order => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-gray-100";
+                tr.innerHTML = `
+                    <td class="p-3 font-bold">${order.id}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded font-semibold text-[10px]">${order.platform}</span></td>
+                    <td class="p-3 text-gray-600">${order.items}</td>
+                    <td class="p-3 font-bold text-slate-900">${order.total.toLocaleString()}đ</td>
+                    <td class="p-3"><span class="text-amber-600 font-medium">${order.status==='ChoXacNhan'?'Chờ xác nhận':'Đang chế biến'}</span></td>
+                    <td class="p-3 text-right">
+                        <button onclick="acceptOnlineOrder('${order.id}')" class="bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-bold px-2.5 py-1 rounded cursor-pointer">Xác nhận đơn</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function acceptOnlineOrder(orderId) {
+            // Chặn nhân viên phục vụ xác nhận đơn trực tuyến của Grab/ShopeeFood
+            if (currentActor === 'phucvu' || currentActor === 'phache') {
+                alert('Tài khoản hiện tại không có thẩm quyền xác nhận đơn trực tuyến!');
+                return;
+            }
+            const idx = onlineOrders.findIndex(o => o.id === orderId);
+            if (idx > -1) {
+                const order = onlineOrders[idx];
+                kdsQueue.push({ id: order.id, origin: order.platform, items: [order.items] });
+                onlineOrders.splice(idx, 1);
+                document.getElementById('badge-online').innerText = onlineOrders.length;
+                renderOnlineOrdersTable();
+                renderKDS();
+            }
+        }
+
+        function renderKDS() {
+            const grid = document.getElementById('kds-grid');
+            grid.innerHTML = '';
+            if(kdsQueue.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400 text-xs bg-white rounded-xl border">Hiện tại quầy pha chế chưa có món mới xếp hàng</div>`;
+                return;
+            }
+            kdsQueue.forEach((job, index) => {
+                const card = document.createElement('div');
+                card.className = "bg-white border border-gray-200 shadow-sm rounded-xl p-4 flex flex-col justify-between";
+                let itemsLi = job.items.map(i => `<li class="border-b border-dashed border-gray-100 py-1 font-medium">${i}</li>`).join('');
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-2 mb-2">
+                            <span class="font-black text-slate-900 text-xs">${job.id}</span>
+                            <span class="bg-amber-100 text-amber-900 text-[10px] font-bold px-2 py-0.5 rounded-full">${job.origin}</span>
+                        </div>
+                        <ul class="text-xs text-gray-700 list-disc list-inside space-y-1">${itemsLi}</ul>
+                    </div>
+                    <button onclick="completeKDSJob(${index})" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 mt-4 rounded-lg transition-colors cursor-pointer">
+                        ĐÃ PHA CHẾ XONG ✓
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function completeKDSJob(index) {
+            kdsQueue.splice(index, 1);
+            renderKDS();
+        }
+
+        function updateDashboardReports() {
+            let totalRevenue = 0;
+            let count = 0;
+            let refundAmount = 0;
+            invoices.forEach(inv => {
+                if (inv.status === 'DaThanhToan') {
+                    totalRevenue += inv.total;
+                    count++;
+                } else if (inv.status === 'DaHoanTien') {
+                    refundAmount += inv.total;
+                }
+            });
+            document.getElementById('report-revenue').innerText = (totalRevenue).toLocaleString() + 'đ';
+            document.getElementById('report-invoice-count').innerText = count + ' đơn';
+            document.getElementById('report-refund').innerText = refundAmount.toLocaleString() + 'đ';
+            document.getElementById('report-items-sold').innerText = (count * 2) + ' ly';
+        }
+
+        function toggleNetwork() {
+            isOnline = !isOnline;
+            const btn = document.getElementById('btn-network');
+            const dot = document.getElementById('network-dot');
+            const alertBox = document.getElementById('offline-alert');
+
+            if (isOnline) {
+                btn.innerText = 'Ngắt mạng';
+                btn.className = 'text-[11px] bg-slate-800 hover:bg-slate-700 px-2 py-0.5 text-slate-300 rounded font-medium cursor-pointer';
+                dot.className = 'w-2 bg-green-500 rounded-full h-2 animate-pulse';
+                alertBox.classList.add('hidden');
+            } else {
+                btn.innerText = 'Kết nối lại';
+                btn.className = 'text-[11px] bg-red-600 hover:bg-red-700 px-2 py-0.5 text-white rounded font-medium cursor-pointer';
+                dot.className = 'w-2 bg-red-500 rounded-full h-2';
+                alertBox.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
